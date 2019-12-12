@@ -90,7 +90,6 @@ layui.define('form', function(exports){
     ,onlyIconControl: false  //是否仅允许节点左侧图标控制展开收缩
     ,isJump: false  //是否允许点击节点时弹出新窗口跳转
     ,edit: false  //是否开启节点的操作图标
-    ,cascade:true //me-191211
     
     ,text: {
       defaultNodeName: '未命名' //节点默认名称
@@ -192,7 +191,7 @@ layui.define('form', function(exports){
               };
             }()
             
-            //复选框//me---start
+            //复选框
             ,function(){
               return options.showCheckbox ? '<input type="checkbox" name="'+ (item.field || ('layuiTreeCheck_'+ item.id)) +'" same="layuiTreeCheck" lay-skin="primary" '+ (item.disabled ? "disabled" : "") +' value="'+ item.id +'">' : '';
             }()
@@ -327,7 +326,7 @@ layui.define('form', function(exports){
   };
   
   //计算复选框选中状态
-  Class.prototype.setCheckbox = function(elem, item, elemCheckbox,chkChild){//me-191211
+  Class.prototype.setCheckbox = function(elem, item, elemCheckbox){
     var that = this
     ,options = that.config
     ,checked = elemCheckbox.prop('checked');
@@ -335,15 +334,13 @@ layui.define('form', function(exports){
     if(elemCheckbox.prop('disabled')) return;
 
     //同步子节点选中状态
-    if(options.cascade && chkChild){//me-191211
-      if(typeof item.children === 'object' || elem.find('.'+ELEM_PACK)[0]){
-        var childs = elem.find('.'+ ELEM_PACK).find('input[same="layuiTreeCheck"]');
-        childs.each(function(){
-          if(this.disabled) return; //不可点击则跳过
-          this.checked = checked;
-        });
-      };
-    }
+    if(typeof item.children === 'object' || elem.find('.'+ELEM_PACK)[0]){
+      var childs = elem.find('.'+ ELEM_PACK).find('input[same="layuiTreeCheck"]');
+      childs.each(function(){
+        if(this.disabled) return; //不可点击则跳过
+        this.checked = checked;
+      });
+    };
 
     //同步父节点选中状态
     var setParentsChecked = function(thisNodeElem){
@@ -354,7 +351,8 @@ layui.define('form', function(exports){
       ,parentPack = thisNodeElem.parent('.'+ ELEM_PACK)
       ,parentNodeElem = parentPack.parent()
       ,parentCheckbox =  parentPack.prev().find('input[same="layuiTreeCheck"]');
-      //如果子节点有任意一条选中，则父节点为选中状态 //me---start
+
+      //如果子节点有任意一条选中，则父节点为选中状态
       if(checked){
         parentCheckbox.prop('checked', checked);
       } else { //如果当前节点取消选中，则根据计算“兄弟和子孙”节点选中状态，来同步父节点选中状态
@@ -371,8 +369,8 @@ layui.define('form', function(exports){
       //向父节点递归
       setParentsChecked(parentNodeElem);
     };
-    if(options.cascade)
-    setParentsChecked(elem);//me-191211
+    
+    setParentsChecked(elem);
 
     that.renderForm('checkbox');
   };
@@ -395,7 +393,7 @@ layui.define('form', function(exports){
       
       if(elemCheckbox.prop('disabled')) return;
       
-      that.setCheckbox(elem, item, elemCheckbox,!e.isTrigger);//me-191211
+      that.setCheckbox(elem, item, elemCheckbox);
 
       //复选框点击产生的回调
       options.oncheck && options.oncheck({
