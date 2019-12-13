@@ -474,7 +474,7 @@ layui.define('layer', function(exports){
       //复选框/开关
       ,checkbox: function(){
         var CLASS = {
-          checkbox: ['layui-form-checkbox', 'layui-form-checked', 'checkbox']
+          checkbox: ['layui-form-checkbox', 'layui-form-checked', 'checkbox','layui-form-parent-checked']
           ,_switch: ['layui-form-switch', 'layui-form-onswitch', 'switch']
         }
         ,checks = elemForm.find('input[type=checkbox]')
@@ -516,7 +516,7 @@ layui.define('layer', function(exports){
           //替代元素
           var hasRender = othis.next('.' + RE_CLASS[0])
           ,reElem = $(['<div class="layui-unselect '+ RE_CLASS[0]
-            ,(check.checked ? (' '+ RE_CLASS[1]) : '') //选中状态
+            ,(check.checked ? ($(check).attr('selectall')?' '+ RE_CLASS[3] :' '+ RE_CLASS[1]) : '') //选中状态
             ,(disabled ? ' layui-checkbox-disbaled '+ DISABLED : '') //禁用状态
             ,'"'
             ,(skin ? ' lay-skin="'+ skin +'"' : '') //风格

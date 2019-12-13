@@ -331,9 +331,9 @@ layui.define('form', function(exports){
     var that = this
     ,options = that.config
     ,checked = elemCheckbox.prop('checked');
-    
+    console.log('that:',that);
     if(elemCheckbox.prop('disabled')) return;
-
+    
     //同步子节点选中状态
     if(options.cascade && chkChild){//me-191211
       if(typeof item.children === 'object' || elem.find('.'+ELEM_PACK)[0]){
@@ -341,6 +341,9 @@ layui.define('form', function(exports){
         childs.each(function(){
           if(this.disabled) return; //不可点击则跳过
           this.checked = checked;
+          // $(this).attr('selectall', 1);
+          // console.log($(this))
+          // me-191213 判断它的兄弟元素又没全部选中
         });
       };
     }
@@ -349,7 +352,7 @@ layui.define('form', function(exports){
     var setParentsChecked = function(thisNodeElem){
       //若无父节点，则终止递归
       if(!thisNodeElem.parents('.'+ ELEM_SET)[0]) return;
-
+      var mestate = true;
       var state
       ,parentPack = thisNodeElem.parent('.'+ ELEM_PACK)
       ,parentNodeElem = parentPack.parent()
@@ -357,6 +360,17 @@ layui.define('form', function(exports){
       //如果子节点有任意一条选中，则父节点为选中状态 //me---start
       if(checked){
         parentCheckbox.prop('checked', checked);
+        parentPack.find('input[same="layuiTreeCheck"]').each(function(){
+          if(!this.checked){
+            mestate = false;
+          }
+        });
+        
+        //如果兄弟子孙节点全部未选中，则父节点也应为非选中状态
+        if (mestate) {
+          $(parentCheckbox).attr('selectall', 1);
+        }
+         
       } else { //如果当前节点取消选中，则根据计算“兄弟和子孙”节点选中状态，来同步父节点选中状态
         parentPack.find('input[same="layuiTreeCheck"]').each(function(){
           if(this.checked){
